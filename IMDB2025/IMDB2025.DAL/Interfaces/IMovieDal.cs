@@ -6,7 +6,7 @@ namespace IMDB2025.DAL.Interfaces
     {
         Movie Create(Movie movie);
         List<Movie> GetAll();
-        Movie GetById(int movieId);
+        Movie? GetById(int movieId);
         Movie Update(Movie movie);
         bool Delete(int movieId);
     }
