@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Windows\MovieListDI - Copy.xaml.cs">
+    <Compile Update="Windows\MovieListDI.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Windows\MovieListMVVM.xaml.cs">

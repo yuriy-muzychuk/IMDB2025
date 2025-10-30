@@ -68,12 +68,16 @@ namespace IMDB2025.WPF
 
             // DAL and BL registrations
             services.AddTransient<IMovieDal>(sp => new MovieDalEf(connStr, sp.GetRequiredService<IMapper>()));
+            services.AddTransient<IGenreDal>(sp => new GenreDalEf(connStr, sp.GetRequiredService<IMapper>()));
             services.AddTransient<IMovieManager, MovieManager>();
 
             // Register windows so they can be resolved with DI
             services.AddTransient<MovieListViewModel>();
+            services.AddTransient<MovieDetailsSimpleViewModel>();
+
             services.AddTransient<MovieListMVVM>();
             services.AddTransient<MovieListDI>();
+            services.AddTransient<MovieDetailsSimple>();
 
             Services = services.BuildServiceProvider();
 

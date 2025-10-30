@@ -5,6 +5,7 @@ using IMDB2025.DALEF.Concrete;
 using IMDB2025.DALEF.MapperProfiles;
 using IMDB2025.DTO;
 using IMDB2025.WPF.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -40,19 +41,24 @@ namespace IMDB2025.WPF.Windows
 
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.AddMovie();
-
-            // Mirror the previous behavior: select and scroll new item into view
-            if (_viewModel.SelectedMovie != null)
-            {
-                MoviesDataGrid.SelectedItem = _viewModel.SelectedMovie;
-                MoviesDataGrid.ScrollIntoView(_viewModel.SelectedMovie);
-            }
+            var editViewModel = ActivatorUtilities.CreateInstance<MovieDetailsSimpleViewModel>(App.Services!, new Movie());
+            var editWin = new MovieDetailsSimple(editViewModel);
+            editWin.Owner = this;
+            editWin.ShowDialog();
+            _viewModel.Refresh();
         }
 
         private void EditButton_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.EditMovie();
+            if (_viewModel.SelectedMovie == null)
+                return;
+
+            // Pass the selected Movie into the constructor chain. ActivatorUtilities will resolve other services.
+            var editViewModel = ActivatorUtilities.CreateInstance<MovieDetailsSimpleViewModel>(App.Services!, _viewModel.SelectedMovie);
+            var editWin = new MovieDetailsSimple(editViewModel);
+            editWin.Owner = this;
+            editWin.ShowDialog();
+            _viewModel.Refresh();
         }
     }
 }

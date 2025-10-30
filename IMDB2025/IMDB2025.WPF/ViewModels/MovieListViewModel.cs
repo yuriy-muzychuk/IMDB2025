@@ -1,13 +1,7 @@
 ﻿using IMDB2025.BL.Interfaces;
 using IMDB2025.DTO;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 
 namespace IMDB2025.WPF.ViewModels
@@ -16,8 +10,17 @@ namespace IMDB2025.WPF.ViewModels
     {
         private readonly IMovieManager _movieManager;
 
-        public ObservableCollection<Movie> Movies { get; }
-        public ICollectionView MoviesView { get; }
+        private ObservableCollection<Movie> _movieList;
+        public ObservableCollection<Movie> Movies
+        {
+            get { return _movieList; }
+            set
+            {
+                _movieList = value;
+                OnPropertyChanged(nameof(Movies));
+            }
+        }
+        public ICollectionView MoviesView { get; private set; }
 
         private string _filterText = string.Empty;
         public string FilterText
@@ -48,9 +51,7 @@ namespace IMDB2025.WPF.ViewModels
         {
             _movieManager = movieManager ?? throw new ArgumentNullException(nameof(movieManager));
 
-            Movies = new ObservableCollection<Movie>(_movieManager.GetAllMovies());
-            MoviesView = CollectionViewSource.GetDefaultView(Movies);
-            MoviesView.Filter = FilterPredicate;
+            Refresh();
         }
 
         private bool FilterPredicate(object? obj)
@@ -68,32 +69,11 @@ namespace IMDB2025.WPF.ViewModels
             return false;
         }
 
-        // Public methods (no ICommand) to be called by the View's code-behind
-        public void AddMovie()
+        public void Refresh()
         {
-            var nextId = Movies.Any() ? Movies.Max(m => m.MovieId) + 1 : 1;
-            var newMovie = new Movie
-            {
-                MovieId = nextId,
-                Title = $"New Movie {nextId}",
-                Genre = new Genre { Name = "Unknown" },
-                ReleaseDate = null
-            };
-            Movies.Add(newMovie);
-            SelectedMovie = newMovie;
-        }
-
-        public void EditMovie()
-        {
-            if (SelectedMovie != null)
-            {
-                // Simple demo behavior; consider moving UI dialogs out of VM in stricter MVVM
-                MessageBox.Show($"Edit movie: {SelectedMovie.Title} (ID: {SelectedMovie.MovieId})", "Edit", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            else
-            {
-                MessageBox.Show("Please select a movie to edit.", "Edit", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+            Movies = new ObservableCollection<Movie>(_movieManager.GetAllMovies());
+            MoviesView = CollectionViewSource.GetDefaultView(Movies);
+            MoviesView.Filter = FilterPredicate;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

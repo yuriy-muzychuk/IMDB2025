@@ -47,7 +47,7 @@ namespace IMDB2025.WPF.Windows
 
             string connStr = "Data Source=Firefly;Initial Catalog=IMDB2025;Integrated Security=True;TrustServerCertificate=True";
             var movieDal = new MovieDalEf(connStr, mapper);
-            var movieManager = new MovieManager(movieDal);
+            var movieManager = new MovieManager(movieDal, null);
             Movies = new ObservableCollection<Movie>(movieManager.GetAllMovies());
 
             _moviesView = CollectionViewSource.GetDefaultView(Movies);
