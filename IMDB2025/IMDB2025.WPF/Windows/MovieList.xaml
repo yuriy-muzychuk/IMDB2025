@@ -1,0 +1,36 @@
+﻿<Window x:Class="IMDB2025.WPF.Windows.MovieList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:IMDB2025.WPF.Windows"
+        mc:Ignorable="d"
+        Title="IMDB 2025" Height="450" Width="800">
+    <Grid Margin="8">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,8" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBox x:Name="FilterTextBox" Width="260" VerticalAlignment="Center" TextChanged="FilterTextBox_TextChanged"/>
+            <Button x:Name="AddButton" Content="Add" Width="75" Margin="12,0,0,0" Click="AddButton_Click"/>
+            <Button x:Name="EditButton" Content="Edit" Width="75" Margin="6,0,0,0" Click="EditButton_Click"/>
+        </StackPanel>
+
+        <DataGrid x:Name="MoviesDataGrid" 
+                  Grid.Row="1" 
+                  ItemsSource="{Binding Movies}" 
+                  AutoGenerateColumns="False" 
+                  IsReadOnly="True" 
+                  SelectionMode="Single">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding MovieId}" Width="80"/>
+                <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                <DataGridTextColumn Header="Genre" Binding="{Binding Genre.Name}" Width="160"/>
+                <DataGridTextColumn Header="Release Date" Binding="{Binding ReleaseDate, StringFormat=\{0:d\}}" Width="140"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>
