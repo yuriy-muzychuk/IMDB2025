@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IMDB2025.BL\IMDB2025.BL.csproj" />
     <ProjectReference Include="..\IMDB2025.DALEF\IMDB2025.DALEF.csproj" />
     <ProjectReference Include="..\IMDB2025.DAL\IMDB2025.DAL.csproj" />
   </ItemGroup>

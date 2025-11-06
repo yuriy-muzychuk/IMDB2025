@@ -1,6 +1,7 @@
 ﻿namespace IMDB2025.Console
 {
     using AutoMapper;
+    using IMDB2025.BL.Concrete;
     using IMDB2025.DAL.Concrete;
     using IMDB2025.DALEF.Concrete;
     using IMDB2025.DALEF.MapperProfiles;
@@ -75,7 +76,23 @@
 
             MapperConfiguration config = new MapperConfiguration(cfg => cfg.AddMaps(typeof(MovieProfile_Back).Assembly), loggerFactory);
             _mapper = config.CreateMapper();
-            TestMapping();
+            //TestMapping();
+
+            CreateUsers();
+        }
+
+        private static void CreateUsers()
+        {
+            var uDal = new UserDalEf(_connectionString, _mapper);
+            var upDal = new UserPrivilegeDalEf(_connectionString, _mapper);
+
+            var manager = new AuthManager(uDal, upDal);
+
+            //var admin = manager.CreateUser("admin@test.com", "admin", "P@ssw0rd", PrivilegeType.Admin);
+            //Console.WriteLine($"Created user: {admin}");
+
+            var user = manager.CreateUser("user@test.com", "user", "P@ssw0rd", PrivilegeType.User);
+            Console.WriteLine($"Created user: {user}");
         }
 
         private static void TestMapping()
