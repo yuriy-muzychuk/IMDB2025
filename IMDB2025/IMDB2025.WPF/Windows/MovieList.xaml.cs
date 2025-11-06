@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using IMDB2025.BL.Concrete;
+using IMDB2025.BL.Interfaces;
 using IMDB2025.DALEF.Concrete;
 using IMDB2025.DALEF.MapperProfiles;
 using IMDB2025.DTO;
@@ -29,26 +30,16 @@ namespace IMDB2025.WPF.Windows
     {
         public ObservableCollection<Movie> Movies { get; } = new ObservableCollection<Movie>();
         private ICollectionView _moviesView;
+        private readonly IMovieManager _movieManager;
 
-        public MovieList()
+        public MovieList(IMovieManager movieManager)
         {
             InitializeComponent();
             DataContext = this;
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder
-                .AddConsole()
-                .SetMinimumLevel(LogLevel.Information);
-            });
-            var logger = loggerFactory.CreateLogger<MovieList>();
+         
+            _movieManager = movieManager;
 
-            MapperConfiguration config = new MapperConfiguration(cfg => cfg.AddMaps(typeof(MovieProfile_Back).Assembly), loggerFactory);
-            var mapper = config.CreateMapper();
-
-            string connStr = "Data Source=Firefly;Initial Catalog=IMDB2025;Integrated Security=True;TrustServerCertificate=True";
-            var movieDal = new MovieDalEf(connStr, mapper);
-            var movieManager = new MovieManager(movieDal);
-            Movies = new ObservableCollection<Movie>(movieManager.GetAllMovies());
+            Movies = new ObservableCollection<Movie>(_movieManager.GetAllMovies());
 
             _moviesView = CollectionViewSource.GetDefaultView(Movies);
             _moviesView.Filter = FilterPredicate;

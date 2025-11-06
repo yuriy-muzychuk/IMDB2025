@@ -10,5 +10,9 @@ namespace IMDB2025.BL.Interfaces
     public interface IMovieManager
     {
         List<Movie> GetAllMovies();
+        Movie CreateMovie(Movie movie);
+        Movie? GetMovieById(int movieId);
+        Movie UpdateMovie(Movie movie);
+        List<Genre> GetAllGenres();
     }
 }

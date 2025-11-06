@@ -6,7 +6,7 @@ namespace IMDB2025.DTO
     {
         public int MovieId { get; set; }
         public string Title { get; set; }
-        public Genre Genre { get; set; }
+        public Genre Genre { get; set; } = new Genre();
         public DateTime? ReleaseDate { get; set; }
 
         public List<Actor> Actors { get; set; } = new List<Actor>();
