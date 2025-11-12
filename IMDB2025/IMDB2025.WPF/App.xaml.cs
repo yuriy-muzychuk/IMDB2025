@@ -23,6 +23,26 @@ namespace IMDB2025.WPF
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            Services = BuildServiceProvider();
+
+            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var login = Services.GetRequiredService<Login>();
+            bool result = login.ShowDialog() ?? false;
+            if (result)
+            {
+                Current.MainWindow = Services.GetRequiredService<MovieListMVVM>();
+                Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
+                Current.MainWindow.Show();
+            }
+            else
+            {
+                Current.Shutdown();
+            }
+        }
+
+        private static IServiceProvider BuildServiceProvider()
+        {
             // Configure DI container
             var services = new ServiceCollection();
 
@@ -64,23 +84,23 @@ namespace IMDB2025.WPF
             // DAL and BL registrations
             services.AddTransient<IMovieDal>(sp => new MovieDalEf(connStr, sp.GetRequiredService<IMapper>()));
             services.AddTransient<IGenreDal>(sp => new GenreDalEf(connStr, sp.GetRequiredService<IMapper>()));
-            
-            
+            services.AddTransient<IUserDal>(sp => new UserDalEf(connStr, sp.GetRequiredService<IMapper>()));
+            services.AddTransient<IUserPrivilegeDal>(sp => new UserPrivilegeDalEf(connStr, sp.GetRequiredService<IMapper>()));
+
             services.AddTransient<IMovieManager, MovieManager>();
+            services.AddTransient<IAuthManager, AuthManager>();
 
             // Register windows so they can be resolved with DI
             services.AddTransient<MovieListViewModel>();
+            services.AddTransient<LoginViewModel>();
             services.AddTransient<MovieDetailsSimpleViewModel>();
 
             services.AddTransient<MovieListMVVM>();
             services.AddTransient<MovieList>();
             services.AddTransient<MovieDetailsSimple>();
+            services.AddTransient<Login>();
 
-            Services = services.BuildServiceProvider();
-
-            var main = Services.GetRequiredService<MovieListMVVM>();
-            Current.MainWindow = main;
-            main.Show();
+            return services.BuildServiceProvider();
         }
     }
 }

@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace IMDB2025.DALEF.Models;
+
+public partial class User
+{
+    [Key]
+    [Column("UserID")]
+    public int UserId { get; set; }
+
+    [StringLength(50)]
+    public string Login { get; set; } = null!;
+
+    [StringLength(100)]
+    public string Email { get; set; } = null!;
+
+    [MaxLength(64)]
+    public byte[] Password { get; set; } = null!;
+
+    public Guid Salt { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime RowInsertTime { get; set; }
+
+    [Column(TypeName = "datetime")]
+    public DateTime RowUpdateTime { get; set; }
+
+    [InverseProperty("User")]
+    public virtual ICollection<UserPrivilege> UserPrivileges { get; set; } = new List<UserPrivilege>();
+}

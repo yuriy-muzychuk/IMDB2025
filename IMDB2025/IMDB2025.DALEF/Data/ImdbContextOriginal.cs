@@ -24,7 +24,14 @@ public partial class ImdbContextOriginal : DbContext
 
     public virtual DbSet<Person> Persons { get; set; }
 
+    public virtual DbSet<Privilege> Privileges { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserPrivilege> UserPrivileges { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("abracadabra");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -54,6 +61,31 @@ public partial class ImdbContextOriginal : DbContext
                         j.HasKey("MovieId", "PersonId");
                         j.ToTable("Directors");
                     });
+        });
+
+        modelBuilder.Entity<Privilege>(entity =>
+        {
+            entity.Property(e => e.RowInsertTime).HasDefaultValueSql("(getutcdate())");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.Property(e => e.Password).IsFixedLength();
+            entity.Property(e => e.RowInsertTime).HasDefaultValueSql("(getutcdate())");
+            entity.Property(e => e.RowUpdateTime).HasDefaultValueSql("(getutcdate())");
+        });
+
+        modelBuilder.Entity<UserPrivilege>(entity =>
+        {
+            entity.Property(e => e.RowInsertTime).HasDefaultValueSql("(getutcdate())");
+
+            entity.HasOne(d => d.Privilege).WithMany(p => p.UserPrivileges)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserPrivileges_Privileges");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserPrivileges)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_UserPrivileges_Users");
         });
 
         OnModelCreatingPartial(modelBuilder);
