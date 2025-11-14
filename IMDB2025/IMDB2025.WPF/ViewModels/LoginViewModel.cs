@@ -1,7 +1,7 @@
 ﻿using IMDB2025.BL.Interfaces;
 using IMDB2025.WPF.Commands;
 using IMDB2025.WPF.Interfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -15,16 +15,32 @@ namespace IMDB2025.WPF.ViewModels
         private string _username = string.Empty;
         private string _password = string.Empty;
         private string? _loginError;
-        public LoginViewModel(IAuthManager security)
+        private readonly ILogger<LoginViewModel> _logger;
+
+        public LoginViewModel(IAuthManager security, ILogger<LoginViewModel> logger)
         {
             _security = security;
+            _logger = logger;
             LoginCommand = new LoginCommand(this);
             CloseCommand = new CloseCommand(this);
         }
 
         public bool Login()
         {
-            return _security.Login(Username, Password);
+            try
+            {
+                bool loginResult = _security.Login(Username, Password);
+                if (!loginResult)
+                {
+                    _logger.LogWarning("Login failed for user '{Username}'.", Username);
+                }
+                return loginResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An exception occurred during login for user '{Username}'.", Username);
+                return false;
+            }
         }
 
         public Action LoginFailed { get; set; }
