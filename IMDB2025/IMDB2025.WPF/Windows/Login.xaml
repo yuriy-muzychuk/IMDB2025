@@ -6,6 +6,14 @@
         xmlns:local="clr-namespace:IMDB2025.WPF.Windows"
         mc:Ignorable="d"
         Title="Login" Height="250" Width="300">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -51,8 +59,8 @@
                    FontSize="12" />
 
             <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" Height="80" HorizontalAlignment="Center">
-                <Button Width="100" Height="40" Content="Cancel" Margin="0,0,50,0" Command="{Binding CloseCommand}"></Button>
-                <Button Width="100" Height="40" Content="Login" Command="{Binding LoginCommand}" IsDefault="True"></Button>
+                <Button Style="{StaticResource RoundedButtonStyle}" Width="100" Height="40" Content="Cancel" Margin="0,0,50,0" Command="{Binding CloseCommand}"></Button>
+                <Button Style="{StaticResource RoundedButtonStyle}" Width="100" Height="40" Content="Login" Command="{Binding LoginCommand}" IsDefault="True"></Button>
             </StackPanel>
         </Grid>
     </Grid>

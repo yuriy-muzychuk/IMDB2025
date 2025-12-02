@@ -25,6 +25,9 @@ namespace IMDB2025.WPF
         {
             Services = BuildServiceProvider();
 
+            var startupLogger = Services.GetRequiredService<ILogger<App>>();
+            startupLogger.LogInformation("Application started");
+
             Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
             var login = Services.GetRequiredService<Login>();
@@ -49,9 +52,9 @@ namespace IMDB2025.WPF
             // Logging
             services.AddLogging(builder =>
             {
-                builder
-                    .AddConsole()
-                    .SetMinimumLevel(LogLevel.Information);
+                builder.ClearProviders();
+                builder.SetMinimumLevel(LogLevel.Information);
+                builder.AddLog4Net("log4net.config");
             });
 
             IConfiguration configuration = new ConfigurationBuilder()
