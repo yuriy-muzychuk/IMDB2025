@@ -18,7 +18,7 @@ namespace IMDB2025.WebApp
             {
                 builder.ClearProviders();
                 builder.SetMinimumLevel(LogLevel.Debug);
-                //builder.AddLog4Net("log4net.config");
+                builder.AddLog4Net("log4net.config");
             });
 
 
