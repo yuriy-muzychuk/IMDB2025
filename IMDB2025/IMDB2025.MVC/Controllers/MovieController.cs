@@ -2,12 +2,15 @@
 using IMDB2025.BL.Interfaces;
 using IMDB2025.DTO;
 using IMDB2025.MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Data;
 
 namespace IMDB2025.MVC.Controllers
 {
+    
     public class MovieController : Controller
     {
         private readonly IMovieManager _manager;
@@ -20,6 +23,7 @@ namespace IMDB2025.MVC.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]
         // GET: MovieController
         public ActionResult Index()
         {
@@ -27,6 +31,7 @@ namespace IMDB2025.MVC.Controllers
             return View(movies);
         }
 
+        [AllowAnonymous]
         // GET: MovieController/Details/5
         public ActionResult Details(int id)
         {
@@ -38,6 +43,7 @@ namespace IMDB2025.MVC.Controllers
             model.Genres = _mapper.Map<List<SelectListItem>>(_manager.GetAllGenres());
         }
 
+        [Authorize(Roles = $"{nameof(PrivilegeType.User)},{nameof(PrivilegeType.Admin)}")]
         // GET: MovieController/Create
         public ActionResult Create()
         {
@@ -46,6 +52,7 @@ namespace IMDB2025.MVC.Controllers
             return View(editMovieModel);
         }
 
+        [Authorize(Roles = $"{nameof(PrivilegeType.User)},{nameof(PrivilegeType.Admin)}")]
         // POST: MovieController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -75,6 +82,7 @@ namespace IMDB2025.MVC.Controllers
             }
         }
 
+        [Authorize(Roles = nameof(PrivilegeType.Admin))]
         // GET: MovieController/Edit/5
         public ActionResult Edit(int id)
         {
@@ -85,6 +93,7 @@ namespace IMDB2025.MVC.Controllers
             return View(editMovieModel);
         }
 
+        [Authorize(Roles = nameof(PrivilegeType.Admin))]
         // POST: MovieController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -117,12 +126,14 @@ namespace IMDB2025.MVC.Controllers
             }
         }
 
+        [Authorize(Roles = nameof(PrivilegeType.Admin))]
         // GET: MovieController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
+        [Authorize(Roles = nameof(PrivilegeType.Admin))]
         // POST: MovieController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]

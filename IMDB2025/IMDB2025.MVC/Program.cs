@@ -5,6 +5,7 @@ using IMDB2025.DAL.Interfaces;
 using IMDB2025.DALEF.Concrete;
 using IMDB2025.DALEF.MapperProfiles;
 using IMDB2025.MVC.App.MappingProfiles;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace IMDB2025.MVC
 {
@@ -45,6 +46,15 @@ namespace IMDB2025.MVC
                             .AddTransient<IMovieManager, MovieManager>()
                             .AddTransient<IAuthManager, AuthManager>();
 
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
+            {
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+                options.SlidingExpiration = true;
+                options.AccessDeniedPath = "/Account/Forbidden/";
+                options.LoginPath = "/Account/Login/";
+            });
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -61,7 +71,8 @@ namespace IMDB2025.MVC
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
